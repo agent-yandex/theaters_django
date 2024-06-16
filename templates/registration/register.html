@@ -1,0 +1,28 @@
+{% extends "base_generic.html" %}
+
+{% block title %}
+  <title>Sign up</title>
+{% endblock %}
+
+{% block content %}
+    {% if request.user.is_authenticated %}
+        <p>You are already logged in</p>
+    {% else %}
+        <form action="{% url 'register' %}" method="POST">
+            {% csrf_token %}
+            <label for="username">Username</label><br>
+            {{ form.username.errors }} {{ form.username }} <br>
+            <label for="first_name">First Name</label><br>
+            {{ form.first_name.errors }} {{ form.first_name }} <br>
+            <label for="last_name">Last Name</label><br>
+            {{ form.last_name.errors }} {{ form.last_name }} <br>
+            <label for="email">Email</label> <br>
+            {{ form.email.errors }} {{ form.email }} <br>
+            <label for="password1">Password</label> <br>
+            {{ form.password1.errors }} {{ form.password1 }}<br>
+            <label for="password2">Again</label><br>
+            {{ form.password2.errors }} {{ form.password2 }}<br>
+            <button type="submit">Register</button>
+        </form>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Performances</h1>
+{% if performances_list %}
+    <ul>
+        {% for performance in performances_list %}
+            <li>
+                <a href="{% url 'performance' performance.id %}">{{ performance.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

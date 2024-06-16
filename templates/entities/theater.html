@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Theater page</h1>
+<p>Title: {{ theater.title }}</p>
+<p>Address: {{ theater.address }}</p>
+<p>Rating: {{ theater.rating }}</p>
+<p>Performances:</p>
+
+{% if theater.performances.all %}
+    <ul>
+    {% for performance in theater.performances.all %}
+        <li><a href="{% url 'performance' performance.id %}">{{ performance.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Performances not found for this theater</p>
+{% endif %}
+
+{% endblock %}

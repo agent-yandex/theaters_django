@@ -1,0 +1,23 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Performance page</h1>
+<p>Title - {{ performance.title }}</p>
+<p>Description - {{ performance.description }}</p>
+<p>Tickets:</p>
+{% if tickets %}
+    <ul>
+        {% for ticket in tickets %}
+            <li><a href="{% url 'ticket' ticket.id %}">
+                Theater - {{ ticket.theater_performance.theater.title }},
+                place - {{ ticket.place }},
+                price - {{ ticket.price }}
+            </a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Sold out!</p>
+{% endif %}
+
+{% endblock %}

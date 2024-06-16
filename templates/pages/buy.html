@@ -1,0 +1,33 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+{% if ticket.client_id is None %}
+    <div>
+        <p>You are going to buy:</p>
+        <ul>
+            <li>Performance - {{ ticket.theater_performance.performance.title }}</li>
+            <li>Theater - {{ ticket.theater_performance.theater.title }}</li>
+            <li>Date - {{ ticket.theater_performance.performance.date }}</li>
+            <li>Time - {{ ticket.time }}</li>
+            <li>Place - {{ ticket.place }}</li>
+        </ul>
+    </div>
+    <p> The price: {{ ticket.price }}</p>
+    <p> Funds available: {{ client.money }}</p>
+    {% if client.money >= ticket.price %}
+        <form action="/buy/{{ ticket.id }}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Buy it">
+        </form>
+    {% else %}
+        <p>Insufficient funds. You can add funds in <a href="{% url 'profile' %}">profile page</a></p>
+    {% endif %}
+
+{% elif ticket.client_id == client.id %}
+    <p>You already have this ticket!</p>
+{% else %}
+    <p>This ticket is already bought by other user</p>
+{% endif %}
+
+{% endblock %}

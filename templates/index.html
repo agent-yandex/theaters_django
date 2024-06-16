@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>APP THEATERS Home</h1>
+<p>Welcome to <em>APP THEATERS</em></p>
+
+<h2>Dynamic content</h2>
+<p>App has the following record counts:</p>
+<ul>
+    <li><strong>Theaters:</strong> {{ theaters }}</li>
+    <li><strong>Performances:</strong> {{ performances }}</li>
+    <li><strong>Tickets:</strong> {{ tickets }}</li>
+</ul>
+{% endblock %}

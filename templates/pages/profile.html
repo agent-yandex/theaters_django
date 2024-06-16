@@ -1,0 +1,34 @@
+{% extends "base_generic.html" %}
+
+{% block title %}
+    <title>Profile</title>
+{% endblock %}
+
+{% block content %}
+    <h1>User Profile</h1>
+    <p><strong>Username:</strong> {{ client.username }}</p>
+    <p><strong>First Name:</strong> {{ client.first_name }}</p>
+    <p><strong>Last Name:</strong> {{ client.last_name }}</p>
+    <p><strong>Funds available:</strong> {{ client.money }}</p>
+    <p>To add funds to your account please use form below</p>
+    <form action="/profile/" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Add funds">
+    </form>
+
+    <div>
+        <p><strong>Tickets:</strong></p>
+        <ul>
+            {% for ticket in tickets %}
+                <li><a href="{% url 'ticket' ticket.id %}">
+                    Theater - {{ ticket.theater_performance.theater.title }},
+                    performance - {{ ticket.theater_performance.performance.title }},
+                    date - {{ ticket.theater_performance.performance.date }}
+                    place - {{ ticket.place }},
+                </a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}

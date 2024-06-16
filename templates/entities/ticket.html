@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Ticket page</h1>
+<p>Performance - {{ theater_performance.performance.title }}</p>
+<p>Theater - {{ theater_performance.theater.title }}</p>
+<p>Date - {{ theater_performance.performance.date }}</p>
+<p>Time - {{ ticket.time }}</p>
+<p>Place - {{ ticket.place }}</p>
+<p>Price - {{ ticket.price }}</p>
+
+{% if ticket.client_id == client.id %}
+    <p>You already have this one!</p>
+{% else %}
+    <p>You can <a href="{% url 'buy' ticket.id %}">buy it</a></p>
+{% endif %}
+
+{% endblock %}
