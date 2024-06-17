@@ -1,7 +1,9 @@
-from django.urls import path, include
+"""URL configuration for the theater ticketing web application."""
+
 from django.contrib.auth import views as auth_views
-from rest_framework.routers import DefaultRouter
+from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
@@ -22,7 +24,6 @@ urlpatterns = [
     path('theater/<uuid:theater_id>', views.theater_view, name='theater'),
     path('performances/', views.PerformanceListView.as_view(), name='performances'),
     path('performance/<uuid:performance_id>', views.performance_view, name='performance'),
-    # path('tickets/', views.TicketListView.as_view(), name='tickets'),
     path('ticket/<uuid:ticket_id>', views.ticket_view, name='ticket'),
 
     path('api/', include(router.urls)),

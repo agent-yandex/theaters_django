@@ -1,24 +1,58 @@
+"""Module of testing models."""
+
 from datetime import date, datetime, timezone
 
-from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from theaters_app import models
 
 
 def create_test(attr, value):
+    """
+    Generate test that ensures ValidationError is raised when creating instance with modified data.
+
+    Args:
+        attr (str): The attribute of the model to be modified.
+        value: The value to assign to the attribute for the test.
+
+    Returns:
+        function: A test function.
+    """
     def new_test(self):
+        """
+        Test that checks if ValidationError is raised when creating an instance with modified data.
+
+        Args:
+            self: test case instance
+        """
         data = self._creation_attrs.copy()
         data[attr] = value
         with self.assertRaises(ValidationError):
             self._model_class.objects.create(**data)
-    
+
     return new_test
 
 
 def create_test_save(attr, value):
+    """
+    Generate test that ensures ValidationError is raised when saving instance with modified data.
+
+    Args:
+        attr (str): The attribute of the model to be modified.
+        value: The value to assign to the attribute for the test.
+
+    Returns:
+        function: A test function.
+    """
     def new_test(self):
+        """
+        Test that checks if ValidationError is raised when creating an instance with modified data.
+
+        Args:
+            self: test case instance
+        """
         data = self._creation_attrs.copy()
         instance = self._model_class.objects.create(**data)
         setattr(instance, attr, value)
@@ -29,11 +63,27 @@ def create_test_save(attr, value):
 
 
 def create_model_test(model_class, creation_attrs, tests):
+    """
+    Create test cases for a model class with specified creation attributes and test configurations.
+
+    Args:
+        model_class (type): The model class to be tested.
+        creation_attrs (dict): A dictionary of attributes.
+        tests (list): A list of test configurations specifying changes to be made for test case.
+
+    Returns:
+        type: A dynamically created test case class that includes tests for:
+              - Successful creation of model instances with valid attributes.
+              - Validation errors when creating instances with invalid attributes.
+    """
     class ModelTest(TestCase):
+        """Test case class for the specified model."""
+
         _model_class = model_class
         _creation_attrs = creation_attrs
 
         def test_successful_creation(self):
+            """Test successful creation of model instances."""
             self._model_class.objects.create(**self._creation_attrs)
 
     for num, values in enumerate(tests):
@@ -66,19 +116,34 @@ invalid_tests = (
     (models.check_limits, -1),
 )
 
+
 def create_validation_test(validator, value, valid=True):
+    """
+    Create a validation test function based on the provided validator, value, and validity flag.
+
+    Args:
+        validator: The validator function to test.
+        value: The value to be validated by the validator function.
+        valid (bool): Flag indicating whether the value should pass validation.
+
+    Returns:
+        A test function that validates the value using the provided validator.
+    """
     if valid:
         return lambda _: validator(value)
+
     def test(self):
         with self.assertRaises(ValidationError):
             validator(value)
     return test
 
+
 valid_methods = {
     f'test_valid_{args[0].__name__}': create_validation_test(*args) for args in valid_tests
 }
 invalid_methods = {
-    f'test_invalid_{args[0].__name__}': create_validation_test(*args, valid=False) for args in invalid_tests
+    f'test_invalid_{args[0].__name__}': create_validation_test(*args, valid=False)
+    for args in invalid_tests
 }
 
 TestValidators = type('TestValidators', (TestCase,), valid_methods | invalid_methods)
@@ -91,7 +156,24 @@ test_str_data = (
 
 
 def create_str_test(model, attrs, expected):
+    """
+    Create a test function for checking the string representation of a model instance.
+
+    Args:
+        model: The model class for which the string representation is being tested.
+        attrs (dict): Dictionary of attributes to create the model instance.
+        expected (str): The expected string representation of the model instance.
+
+    Returns:
+        A test that creates a model instance with the attrs and checks its string representation.
+    """
     def test(self):
+        """
+        Test the string representation of the model instance.
+
+        Args:
+            self: The test case instance.
+        """
         self.assertEqual(str(model.objects.create(**attrs)), expected)
 
     return test
@@ -102,7 +184,10 @@ TestStr = type('TestStr', (TestCase,), test_str_method)
 
 
 class TestLinks(TestCase):
+    """Test of linking Competition and Sport models through CompetitionSport model."""
+
     def test_theater_performance(self):
+        """Test the links between the Theater and Performance model instance."""
         theater = models.Theater.objects.create(**theater_attrs)
         performance = models.Performance.objects.create(**performance_attrs)
         theater.performances.add(performance)
@@ -112,16 +197,26 @@ class TestLinks(TestCase):
         self.assertEqual(str(link), f'{theater} - {performance}')
 
     def test_ticket_theater_performance(self):
+        """Test the links between the Ticket and Performance model instance."""
         theater = models.Theater.objects.create(**theater_attrs)
         performance = models.Performance.objects.create(**performance_attrs)
         theater.performances.add(performance)
-        theater_perfomance = models.TheaterPerformance.objects.get(theater=theater, performance=performance)
-        ticket_attrs = {'price': 100, 'time': '11:36:59', 'place': '12', 'theater_performance_id': theater_perfomance.id}
+        theater_perfomance = models.TheaterPerformance.objects.get(
+            theater=theater,
+            performance=performance,
+        )
+        ticket_attrs = {
+            'price': 100,
+            'time': '11:36:59',
+            'place': '12',
+            'theater_performance_id': theater_perfomance.id,
+        }
         ticket = models.Ticket.objects.create(**ticket_attrs)
 
         self.assertEqual(str(ticket.theater_performance), f'{theater} - {performance}')
 
     def test_ticket_client(self):
+        """Test the links between the Ticket and Client model instance."""
         user = User.objects.create(username='test', password='test')
         client = models.Client.objects.create(user=user)
         ticket_attrs = {'price': 100, 'time': '11:36:59', 'place': '12', 'client_id': client.id}

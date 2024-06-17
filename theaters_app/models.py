@@ -1,10 +1,12 @@
+"""Module for defining Django models related to competitions, sports, stages, and clients."""
+
+from datetime import date, datetime, timezone
 from uuid import uuid4
 
-from django.db import models
-from datetime import datetime, timezone, date
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 from django.conf.global_settings import AUTH_USER_MODEL
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 def get_datetime() -> datetime:
